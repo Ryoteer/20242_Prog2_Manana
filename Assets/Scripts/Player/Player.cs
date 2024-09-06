@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     [Header("<color=#6A89A7>Animation</color>")]
     [SerializeField] private string _atkName = "onAttack";
+    [SerializeField] private string _isMovName = "isMoving";
     [SerializeField] private string _xName = "xAxis";
     [SerializeField] private string _zName = "zAxis";
 
@@ -46,6 +47,7 @@ public class Player : MonoBehaviour
 
         _anim.SetFloat(_xName, _xAxis);
         _anim.SetFloat(_zName, _zAxis);
+        _anim.SetBool(_isMovName, _xAxis != 0 || _zAxis != 0);
 
         if (Input.GetKeyDown(_atkKey))
         {
@@ -80,6 +82,11 @@ public class Player : MonoBehaviour
         //_rb.AddForce(_dir * _movSpeed, ForceMode.Force);
 
         _rb.MovePosition(transform.position + _dir * _movSpeed * Time.fixedDeltaTime);
+    }
+
+    public void Attack(int dmg = 0)
+    {
+        Debug.Log($"<color=#6A89A7>{name}</color>: Japish. Comiste <color=#000000>{dmg}</color> puntos de daño.");
     }
 
     private void OnCollisionEnter(Collision collision)

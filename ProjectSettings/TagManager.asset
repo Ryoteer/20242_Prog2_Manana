@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Player
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -36,7 +36,7 @@ TagManager:
   - 
   - 
   - Ground
-  - 
+  - Walls
   m_SortingLayers:
   - name: Default
     uniqueID: 0
