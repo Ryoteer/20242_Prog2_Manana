@@ -11,6 +11,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _distToChase = 6.0f;
     [SerializeField] private float _distToAttack = 2.0f;
 
+    [Header("<color=red>Behaviours</color>")]
+    [SerializeField] private int _maxHP = 100;
+
+    private int _actualHP;
+
     private Transform _actualNode, _targetTransform;
     private List<Transform> _pathfindingNodes = new();
     public Transform TargetTransform 
@@ -28,7 +33,13 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        GameManager.Instance.Enemies.Add(this);
+
         _agent = GetComponent<NavMeshAgent>();
+
+        _targetTransform = GameManager.Instance.Player.transform;
+
+        _actualHP = _maxHP;
     }
 
     public void Initialize()
@@ -66,6 +77,22 @@ public class Enemy : MonoBehaviour
 
                 _agent.SetDestination(_actualNode.position);
             }
+        }
+    }
+
+    public void TakeDamage(int dmg)
+    {
+        _actualHP -= dmg;
+
+        if(_actualHP <= 0)
+        {
+            GameManager.Instance.Enemies.Remove(this);
+
+            Destroy(gameObject);
+        }
+        else
+        {
+            print($"<color=red>{name}</color>: Recibí <color=black>{dmg}</color> puntos de daño.");
         }
     }
 

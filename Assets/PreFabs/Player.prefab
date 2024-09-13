@@ -774,6 +774,7 @@ Transform:
   - {fileID: 2177235589593313754}
   - {fileID: 8086601945721708222}
   - {fileID: 8903341683640937804}
+  - {fileID: 4970350496877207046}
   m_Father: {fileID: 3253368919580658714}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3266968385858351692
@@ -1881,6 +1882,37 @@ Transform:
   - {fileID: 602833488739427320}
   m_Father: {fileID: 5974512175494628869}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7006057082529226425
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4970350496877207046}
+  m_Layer: 0
+  m_Name: Punch Origin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4970350496877207046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7006057082529226425}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1657531270909740666}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7052818301720843409
 GameObject:
   m_ObjectHideFlags: 0
@@ -2042,11 +2074,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _atkName: onAttack
+  _isGroundName: isGrounded
   _isMovName: isMoving
+  _jmpName: onJump
   _xName: xAxis
   _zName: zAxis
+  _atkDmg: 20
+  _atkOrigin: {fileID: 4970350496877207046}
   _atkKey: 323
   _jumpKey: 32
+  _atkDist: 1.5
+  _atkMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _blockDistCheck: 1
+  _blockMask:
+    serializedVersion: 2
+    m_Bits: 2147483648
+  _jmpRayOffset: 0.125
+  _jmpRayDist: 0.5
+  _jmpMask:
+    serializedVersion: 2
+    m_Bits: 1073741824
   _jumpForce: 5
   _movSpeed: 5
 --- !u!1 &7304733723482160223

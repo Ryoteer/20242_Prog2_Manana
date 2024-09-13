@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class NodeCollector : MonoBehaviour
 {
-    [Header("<color=red>AI</color>")]
-    [SerializeField] private Player _player;
-    [SerializeField] private List<Enemy> _enemies = new();
-
     private Transform[] _nodes;
 
     private void Start()
     {
         _nodes = GetComponentsInChildren<Transform>();
 
-        foreach(Enemy enemy in _enemies)
+        foreach(Enemy enemy in GameManager.Instance.Enemies)
         {
-            enemy.TargetTransform = _player.transform;
             enemy.PathfindingNodes.AddRange(_nodes);
             enemy.Initialize();
         }
