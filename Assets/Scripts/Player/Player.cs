@@ -6,7 +6,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("<color=#6A89A7>Animation</color>")]
+    [SerializeField] private string _areaAtkName = "onAreaAttack";
     [SerializeField] private string _atkName = "onAttack";
+    [SerializeField] private string _pierceAtkName = "onPierceAttack";
     [SerializeField] private string _isGroundName = "isGrounded";
     [SerializeField] private string _isMovName = "isMoving";
     [SerializeField] private string _jmpName = "onJump";
@@ -16,21 +18,29 @@ public class Player : MonoBehaviour
     [Header("<color=#6A89A7>Behaviours</color>")]
     [SerializeField] private int _atkDmg = 20;
     [SerializeField] private Transform _atkOrigin;
+    [SerializeField] private Transform _intOrigin;
 
     [Header("<color=#6A89A7>Inputs</color>")]
+    [SerializeField] private KeyCode _areaAtkKey = KeyCode.Mouse2;
     [SerializeField] private KeyCode _atkKey = KeyCode.Mouse0;
+    [SerializeField] private KeyCode _pierceAtkKey = KeyCode.Mouse1;
+    [SerializeField] private KeyCode _interactKey = KeyCode.F;
     [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
 
     [Header("<color=#6A89A7>Physics</color>")]
+    [SerializeField] private float _areaAtkRad = 2.5f;
     [SerializeField] private float _atkDist = 1.5f;
     [SerializeField] private LayerMask _atkMask;
     [SerializeField] private float _blockDistCheck = 1.0f;
     [SerializeField] private LayerMask _blockMask;
+    [SerializeField] private float _intRayDist = 1.0f;
+    [SerializeField] private LayerMask _intMask;
     [SerializeField] private float _jmpRayOffset = 0.125f;
     [SerializeField] private float _jmpRayDist = 0.5f;
     [SerializeField] private LayerMask _jmpMask;
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _movSpeed = 3.5f;
+    [SerializeField] private float _pierceAtkDist = 15.0f;
 
     private float _xAxis = 0f, _zAxis = 0f;
     private Vector3 _dir = new(), _blockDir = new(), _jmpOrigin = new();
@@ -38,8 +48,8 @@ public class Player : MonoBehaviour
     private Animator _anim;
     private Rigidbody _rb;
 
-    private Ray _atkRay, _blockRay, _jmpRay;
-    private RaycastHit _atkHit;
+    private Ray _atkRay, _blockRay, _intRay, _jmpRay, _pierceAtkRay;
+    private RaycastHit _atkHit, _intHit;
 
     private void Awake()
     {
@@ -71,6 +81,19 @@ public class Player : MonoBehaviour
         {
             _anim.SetTrigger(_atkName);
         }
+        else if (Input.GetKeyUp(_areaAtkKey))
+        {
+            _anim.SetTrigger(_areaAtkName);
+        }
+        else if (Input.GetKeyDown(_pierceAtkKey))
+        {
+            _anim.SetTrigger(_pierceAtkName);
+        }
+
+        if (Input.GetKeyDown(_interactKey))
+        {
+            Interact();
+        }
 
         if (Input.GetKeyDown(_jumpKey) && IsGrounded())
         {
@@ -83,6 +106,19 @@ public class Player : MonoBehaviour
         if((_xAxis != 0 || _zAxis != 0) && !IsBlocked(_xAxis, _zAxis))
         {
             Movement(_xAxis, _zAxis);
+        }
+    }
+
+    private void Interact()
+    {
+        _intRay = new Ray(_intOrigin.position, transform.forward);
+
+        if(Physics.SphereCast(_intRay, 0.25f, out _intHit, _intRayDist, _intMask))
+        {
+            if(_intHit.collider.TryGetComponent(out IInteractable intObj))
+            {
+                intObj.OnInteract();
+            }
         }
     }
 
@@ -102,6 +138,19 @@ public class Player : MonoBehaviour
         _rb.MovePosition(transform.position + _dir * _movSpeed * Time.fixedDeltaTime);
     }
 
+    public void AreaAttack(int dmg = 0)
+    {
+        Collider[] hitObjs = Physics.OverlapSphere(transform.position, _areaAtkRad);
+
+        foreach(Collider obj in hitObjs)
+        {
+            if (obj.TryGetComponent(out Enemy enemy))
+            {
+                enemy.TakeDamage(_atkDmg * 5);
+            }
+        }
+    }
+
     public void Attack(int dmg = 0)
     {
         _atkRay = new Ray(_atkOrigin.position, transform.forward);
@@ -111,6 +160,21 @@ public class Player : MonoBehaviour
             if(_atkHit.collider.TryGetComponent<Enemy>(out Enemy enemy))
             {
                 enemy.TakeDamage(_atkDmg);
+            }
+        }
+    }
+
+    public void PierceAttack(int dmg = 0)
+    {
+        _pierceAtkRay = new Ray(_atkOrigin.position, transform.forward);
+
+        RaycastHit[] hitObjs = Physics.RaycastAll(_pierceAtkRay, _pierceAtkDist, _atkMask);
+
+        foreach(RaycastHit obj in hitObjs)
+        {
+            if(obj.collider.TryGetComponent(out Enemy enemy))
+            {
+                enemy.TakeDamage(_atkDmg * 2);
             }
         }
     }
