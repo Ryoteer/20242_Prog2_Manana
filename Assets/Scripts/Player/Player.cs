@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -19,6 +20,11 @@ public class Player : MonoBehaviour
     [SerializeField] private int _atkDmg = 20;
     [SerializeField] private Transform _atkOrigin;
     [SerializeField] private Transform _intOrigin;
+
+    [Header("<color=#6A89A7>Camera</color>")]
+    [SerializeField] private Transform _camTarget;
+
+    public Transform GetCamTarget { get { return _camTarget; } }
 
     [Header("<color=#6A89A7>Inputs</color>")]
     [SerializeField] private KeyCode _areaAtkKey = KeyCode.Mouse2;
@@ -42,11 +48,12 @@ public class Player : MonoBehaviour
     [SerializeField] private float _movSpeed = 3.5f;
     [SerializeField] private float _pierceAtkDist = 15.0f;
 
-    private float _xAxis = 0f, _zAxis = 0f;
     private Vector3 _dir = new(), _blockDir = new(), _jmpOrigin = new();
+    private Vector3 _camFowardFix = new(), _camRightFix = new(), _dirFix = new();
 
     private Animator _anim;
     private Rigidbody _rb;
+    private Transform _camTransform;
 
     private Ray _atkRay, _blockRay, _intRay, _jmpRay, _pierceAtkRay;
     private RaycastHit _atkHit, _intHit;
@@ -64,17 +71,19 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        _camTransform = Camera.main.transform;
+
         _anim = GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
-        _xAxis = Input.GetAxis("Horizontal");
-        _zAxis = Input.GetAxis("Vertical");
+        _dir.x = Input.GetAxis("Horizontal");
+        _dir.z = Input.GetAxis("Vertical");
 
-        _anim.SetFloat(_xName, _xAxis);
-        _anim.SetFloat(_zName, _zAxis);
-        _anim.SetBool(_isMovName, _xAxis != 0 || _zAxis != 0);
+        _anim.SetFloat(_xName, _dir.x);
+        _anim.SetFloat(_zName, _dir.z);
+        _anim.SetBool(_isMovName, _dir.x != 0 || _dir.z != 0);
         _anim.SetBool(_isGroundName, IsGrounded());
 
         if (Input.GetKeyDown(_atkKey))
@@ -103,9 +112,9 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if((_xAxis != 0 || _zAxis != 0) && !IsBlocked(_xAxis, _zAxis))
+        if((_dir.x != 0 || _dir.z != 0) && !IsBlocked(_dir.x, _dir.z))
         {
-            Movement(_xAxis, _zAxis);
+            Movement(_dir);
         }
     }
 
@@ -128,14 +137,27 @@ public class Player : MonoBehaviour
         _rb.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
     }
 
-    private void Movement(float x, float z)
+    private void Movement(Vector3 dir)
     {
-        _dir = (transform.right * x + transform.forward * z).normalized;
+        if(dir.sqrMagnitude != 0.0f)
+        {
+            _camFowardFix = _camTransform.forward;
+            _camRightFix = _camTransform.right;
 
-        //_rb.velocity = _dir * _movSpeed;
-        //_rb.AddForce(_dir * _movSpeed, ForceMode.Force);
+            _camFowardFix.y = 0.0f;
+            _camRightFix.y = 0.0f;
 
-        _rb.MovePosition(transform.position + _dir * _movSpeed * Time.fixedDeltaTime);
+            Rotate(_camFowardFix);
+
+            _dirFix = (_camRightFix * dir.x + _camFowardFix * dir.z);
+
+            _rb.MovePosition(transform.position + _dirFix * _movSpeed * Time.fixedDeltaTime);
+        }
+    }
+
+    private void Rotate(Vector3 dir)
+    {
+        transform.forward = dir;
     }
 
     public void AreaAttack(int dmg = 0)
