@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -149,7 +148,7 @@ public class Player : MonoBehaviour
 
             Rotate(_camFowardFix);
 
-            _dirFix = (_camRightFix * dir.x + _camFowardFix * dir.z);
+            _dirFix = (_camRightFix * dir.x + _camFowardFix * dir.z).normalized;
 
             _rb.MovePosition(transform.position + _dirFix * _movSpeed * Time.fixedDeltaTime);
         }

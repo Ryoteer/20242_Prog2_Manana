@@ -139,7 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockMode: 1
   _isCursorVisible: 0
-  _detectionRadius: 0.1
+  _detectionRadius: 0.125
   _hitOffset: 0.25
   _mouseSensitivity: 1000
   _minDistance: 0.25
