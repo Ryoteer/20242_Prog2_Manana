@@ -31,6 +31,7 @@ public class Player : MonoBehaviour
     [SerializeField] private KeyCode _pierceAtkKey = KeyCode.Mouse1;
     [SerializeField] private KeyCode _interactKey = KeyCode.F;
     [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
+    [SerializeField] private KeyCode _returnKey = KeyCode.P;
 
     [Header("<color=#6A89A7>Physics</color>")]
     [SerializeField] private float _areaAtkRad = 2.5f;
@@ -77,6 +78,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(_returnKey))
+        {
+            SceneLoadManager.Instance.LoadSceneAsync("MainMenu");
+        }
+
         _dir.x = Input.GetAxis("Horizontal");
         _dir.z = Input.GetAxis("Vertical");
 

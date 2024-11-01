@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class ButtonAction : MonoBehaviour
 {
+    private void OnEnable()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+
     public void LoadScenAsync(string scene)
     {
         SceneLoadManager.Instance.LoadSceneAsync(scene);

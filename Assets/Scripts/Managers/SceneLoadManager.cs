@@ -25,7 +25,7 @@ public class SceneLoadManager : MonoBehaviour
     #endregion
 
     [Header("<color=#F69AB1>UI</color>")]
-    [SerializeField] private Image[] _bgImages;
+    [SerializeField] private Image _bgImage;
     [SerializeField] private float _fadeTime = 0.25f;
     [SerializeField] private Image _loadBarBG;
     [SerializeField] private Image _loadBarFill;
@@ -35,13 +35,8 @@ public class SceneLoadManager : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < _bgImages.Length; i++)
-        {
-            _bgImages[i].color = new Color(_bgImages[i].color.r, _bgImages[i].color.g, _bgImages[i].color.b, 0.0f);
-
-            _bgImages[i].enabled = false;
-        }
-
+        _bgImage.color = new Color(_bgImage.color.r, _bgImage.color.g, _bgImage.color.b, 0.0f);
+        _bgImage.enabled = false;
         _loadBarBG.enabled = false;
         _loadBarFill.enabled = false;
         _stateText.text = "";
@@ -61,19 +56,13 @@ public class SceneLoadManager : MonoBehaviour
 
         float t = 0.0f;
 
-        for(int i = 0; i < _bgImages.Length; i++)
-        {
-            _bgImages[i].enabled = true;
-        }
+        _bgImage.enabled = true;
 
         while (t < 1.0f)
         {
             t += Time.deltaTime / _fadeTime;
 
-            for (int i = 0; i < _bgImages.Length; i++)
-            {
-                _bgImages[i].color = new Color(_bgImages[i].color.r, _bgImages[i].color.g, _bgImages[i].color.b, Mathf.Lerp(0.0f, 1.0f, t));
-            }
+            _bgImage.color = new Color(_bgImage.color.r, _bgImage.color.g, _bgImage.color.b, Mathf.Lerp(0.0f, 1.0f, t));
 
             yield return null;
         }        
@@ -113,18 +102,12 @@ public class SceneLoadManager : MonoBehaviour
         {
             t += Time.deltaTime / _fadeTime;
 
-            for (int i = 0; i < _bgImages.Length; i++)
-            {
-                _bgImages[i].color = new Color(_bgImages[i].color.r, _bgImages[i].color.g, _bgImages[i].color.b, Mathf.Lerp(1.0f, 0.0f, t));
-            }
+            _bgImage.color = new Color(_bgImage.color.r, _bgImage.color.g, _bgImage.color.b, Mathf.Lerp(1.0f, 0.0f, t));
 
             yield return null;
         }
 
-        for (int i = 0; i < _bgImages.Length; i++)
-        {
-            _bgImages[i].enabled = false;
-        }
+        _bgImage.enabled = false;
 
         _isSceneLoading = false;
     }
