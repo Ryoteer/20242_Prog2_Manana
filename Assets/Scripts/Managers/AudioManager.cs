@@ -7,20 +7,7 @@ using UnityEngine.Audio;
 public class AudioManager : MonoBehaviour
 {
     #region Singleton
-    public static AudioManager Instance;
-
-    private void Awake()
-    {
-        if (!Instance)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    } 
+    public static AudioManager Instance;     
     #endregion
 
     [Header("<color=orange>Audio</color>")]
@@ -35,8 +22,20 @@ public class AudioManager : MonoBehaviour
     private float _sfxVol = 0.0f;
     public float SfxVol { get { return _sfxVol; } set { _sfxVol = value; } }
 
-    private void Start()
+    private void Awake()
     {
+        #region Instance
+        if (!Instance)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        #endregion
+
         _source = GetComponent<AudioSource>();
     }
 
